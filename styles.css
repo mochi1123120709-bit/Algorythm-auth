@@ -1,8 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
-/* ===========================
-   RESET & BASE STYLES
-   =========================== */
 * {
     margin: 0;
     padding: 0;
@@ -34,9 +31,6 @@ body {
     position: relative;
 }
 
-/* ===========================
-   3D BACKGROUND CANVASES
-   =========================== */
 #auth-3d-canvas, #matrix-canvas {
     position: fixed;
     top: 0;
@@ -52,9 +46,6 @@ body {
     z-index: -9;
 }
 
-/* ===========================
-   BACKGROUND BLOBS
-   =========================== */
 .blob {
     position: fixed;
     inset: 0;
@@ -86,9 +77,6 @@ body {
     50% { transform: translate(-40px, 30px) scale(1.2); }
 }
 
-/* ===========================
-   CURSOR FOLLOWER
-   =========================== */
 .cursor-follower {
     position: fixed;
     pointer-events: none;
@@ -109,9 +97,6 @@ body {
     }
 }
 
-/* ===========================
-   HEADER
-   =========================== */
 .auth-header {
     position: fixed;
     top: 0;
@@ -197,9 +182,6 @@ body {
     transform: translateY(-2px);
 }
 
-/* ===========================
-   MAIN CONTAINER
-   =========================== */
 .container {
     position: relative;
     width: 900px;
@@ -219,9 +201,6 @@ body {
     50% { transform: translateY(-10px); }
 }
 
-/* ===========================
-   FORM BOXES
-   =========================== */
 .form-box {
     position: absolute;
     right: 0;
@@ -268,9 +247,6 @@ body {
     margin-bottom: 2rem;
 }
 
-/* ===========================
-   INPUT STYLES
-   =========================== */
 .input-box {
     position: relative;
     margin: 25px 0;
@@ -314,9 +290,6 @@ body {
     color: var(--accent);
 }
 
-/* ===========================
-   PASSWORD STRENGTH
-   =========================== */
 .password-strength {
     margin: 10px 0 20px;
     display: flex;
@@ -347,9 +320,6 @@ body {
     color: var(--text-muted);
 }
 
-/* ===========================
-   CHECKBOX STYLES
-   =========================== */
 .terms-checkbox {
     margin: 20px 0;
     text-align: left;
@@ -400,9 +370,6 @@ body {
     text-decoration: underline;
 }
 
-/* ===========================
-   BUTTONS
-   =========================== */
 .btn {
     width: 100%;
     height: 50px;
@@ -417,6 +384,7 @@ body {
     position: relative;
     overflow: hidden;
     box-shadow: 0 8px 25px rgba(245,158,11,0.3);
+    margin: 10px 0;
 }
 
 .btn:hover {
@@ -477,9 +445,6 @@ body {
     color: var(--accent-light);
 }
 
-/* ===========================
-   SOCIAL LOGIN
-   =========================== */
 .social-login {
     margin-top: 30px;
 }
@@ -541,9 +506,11 @@ body {
     border-color: #333;
 }
 
-/* ===========================
-   TOGGLE BOX & PANELS
-   =========================== */
+.facebook-btn:hover {
+    background: rgba(24, 119, 242, 0.1);
+    border-color: #1877f2;
+}
+
 .toggle-box {
     position: absolute;
     width: 100%;
@@ -636,9 +603,6 @@ body {
     box-shadow: 0 8px 25px rgba(0,0,0,0.3);
 }
 
-/* ===========================
-   FLOATING CODE SNIPPETS
-   =========================== */
 .floating-code {
     position: absolute;
     inset: 0;
@@ -695,21 +659,18 @@ body {
 }
 
 @keyframes codeFloat {
-    0% { 
+    0% {
         transform: translateX(0);
         opacity: 0;
     }
     10% { opacity: 0.6; }
     90% { opacity: 0.6; }
-    100% { 
+    100% {
         transform: translateX(calc(100vw + 400px));
         opacity: 0;
     }
 }
 
-/* ===========================
-   MUSIC VISUALIZER
-   =========================== */
 .music-visualizer {
     position: fixed;
     bottom: 30px;
@@ -761,9 +722,6 @@ body {
     font-weight: 500;
 }
 
-/* ===========================
-   SUCCESS MODAL
-   =========================== */
 .success-modal {
     position: fixed;
     inset: 0;
@@ -823,9 +781,6 @@ body {
     margin-bottom: 2rem;
 }
 
-/* ===========================
-   RESPONSIVE DESIGN
-   =========================== */
 @media screen and (max-width: 768px) {
     .container {
         width: 95vw;
@@ -833,19 +788,19 @@ body {
         margin: 20px auto;
         border-radius: 20px;
     }
-    
+
     .form-box {
         bottom: 0;
         width: 100%;
         height: 65%;
         padding: 30px 20px;
     }
-    
+
     .container.active .form-box {
         right: 0;
         bottom: 35%;
     }
-    
+
     .toggle-box::before {
         left: 0;
         top: -270%;
@@ -853,63 +808,63 @@ body {
         height: 300%;
         border-radius: 20vw;
     }
-    
+
     .container.active .toggle-box::before {
         left: 0;
         top: 65%;
     }
-    
+
     .toggle-panel {
         width: 100%;
         height: 35%;
         padding: 20px;
     }
-    
+
     .toggle-panel.toggle-left {
         top: 0;
     }
-    
+
     .container.active .toggle-panel.toggle-left {
         left: 0;
         top: -35%;
     }
-    
+
     .toggle-panel.toggle-right {
         right: 0;
         bottom: -35%;
     }
-    
+
     .container.active .toggle-panel.toggle-right {
         bottom: 0;
     }
-    
+
     .toggle-panel h1 {
         font-size: 1.8rem;
     }
-    
+
     .toggle-panel p {
         font-size: 0.9rem;
     }
-    
+
     .form-box h1 {
         font-size: 2rem;
     }
-    
+
     .auth-header {
         padding: 1rem;
     }
-    
+
     .header-content {
         flex-direction: column;
         gap: 1rem;
     }
-    
+
     .music-visualizer {
         bottom: 20px;
         right: 20px;
         padding: 10px 15px;
     }
-    
+
     .floating-code {
         display: none;
     }
@@ -919,19 +874,19 @@ body {
     .form-box {
         padding: 20px 15px;
     }
-    
+
     .toggle-panel {
         padding: 15px;
     }
-    
+
     .toggle-panel h1 {
         font-size: 1.5rem;
     }
-    
+
     .form-box h1 {
         font-size: 1.8rem;
     }
-    
+
     .social-icons a {
         width: 45px;
         height: 45px;
@@ -939,9 +894,6 @@ body {
     }
 }
 
-/* ===========================
-   ACCESSIBILITY & REDUCED MOTION
-   =========================== */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -950,12 +902,12 @@ body {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
-    
+
     .floating-code,
     .cursor-follower {
         display: none;
     }
-    
+
     .blob {
         opacity: 0.3;
     }
@@ -965,19 +917,16 @@ body {
     .container {
         border: 2px solid white;
     }
-    
+
     .input-box input {
         border: 2px solid var(--glass-border);
     }
-    
+
     .btn {
         border: 2px solid var(--accent);
     }
 }
 
-/* ===========================
-   NOTIFICATION STYLES
-   =========================== */
 .notification {
     position: fixed;
     top: 2rem;
