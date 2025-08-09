@@ -292,86 +292,6 @@ form {
     color: var(--accent);
 }
 
-.password-strength {
-    margin: 10px 0 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.strength-bars {
-    display: flex;
-    gap: 4px;
-    flex: 1;
-}
-
-.strength-bar {
-    height: 4px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 2px;
-    flex: 1;
-    transition: all 0.3s ease;
-}
-
-.strength-bar.weak { background: #ef4444; }
-.strength-bar.medium { background: var(--accent); }
-.strength-bar.strong { background: #10b981; }
-
-.strength-text {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-}
-
-.terms-checkbox {
-    margin: 20px 0;
-    text-align: left;
-}
-
-.terms-checkbox label {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-}
-
-.terms-checkbox input[type="checkbox"] {
-    display: none;
-}
-
-.checkmark {
-    width: 20px;
-    height: 20px;
-    border: 2px solid var(--glass-border);
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-}
-
-.terms-checkbox input[type="checkbox"]:checked + .checkmark {
-    background: var(--accent);
-    border-color: var(--accent);
-}
-
-.terms-checkbox input[type="checkbox"]:checked + .checkmark::after {
-    content: '✓';
-    color: white;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-.terms-checkbox a {
-    color: var(--accent);
-    text-decoration: none;
-}
-
-.terms-checkbox a:hover {
-    text-decoration: underline;
-}
-
 .forgot-link { 
     margin: -15px 0 15px;
     text-align: right;
@@ -561,7 +481,7 @@ form {
     opacity: 0.9;
 }
 
-.toggle-btn {
+.toggle-panel .btn {
     width: 160px;
     height: 46px;
     background: transparent;
@@ -574,7 +494,7 @@ form {
     transition: all 0.3s ease;
 }
 
-.toggle-btn:hover {
+.toggle-panel .btn:hover {
     background: white;
     color: var(--accent);
     transform: translateY(-2px);
@@ -915,15 +835,4 @@ form {
 .notification.info {
     background: rgba(245, 158, 11, 0.9);
     border-color: rgba(245, 158, 11, 0.3);
-}
-/* Toggle effect for login/signup */
-.form-box.register {
-    visibility: hidden;
-    transition: .6s ease-in-out 1.2s, visibility 0s 1s;
-}
-.container.active .form-box.login {
-    right: 50%;
-}
-.container.active .form-box.register {
-    visibility: visible;
 }
