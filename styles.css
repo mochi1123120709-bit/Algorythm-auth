@@ -916,3 +916,14 @@ form {
     background: rgba(245, 158, 11, 0.9);
     border-color: rgba(245, 158, 11, 0.3);
 }
+/* Toggle effect for login/signup */
+.form-box.register {
+    visibility: hidden;
+    transition: .6s ease-in-out 1.2s, visibility 0s 1s;
+}
+.container.active .form-box.login {
+    right: 50%;
+}
+.container.active .form-box.register {
+    visibility: visible;
+}
