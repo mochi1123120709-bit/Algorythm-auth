@@ -19,15 +19,17 @@ class AuthManager {
     }
 
     setupEventListeners() {
-        // Toggle between login and register
+        // Toggle between login and register with smooth animation
         this.registerBtn?.addEventListener('click', () => {
             this.container.classList.add('active');
             this.currentForm = 'register';
+            this.animateFormSwitch('register');
         });
 
         this.loginBtn?.addEventListener('click', () => {
             this.container.classList.remove('active');
             this.currentForm = 'login';
+            this.animateFormSwitch('login');
         });
 
         // Form submissions
@@ -36,15 +38,32 @@ class AuthManager {
 
         // Social authentication
         document.querySelectorAll('.google-btn').forEach(btn => {
-            btn.addEventListener('click', () => this.handleSocialAuth('google'));
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.handleSocialAuth('google');
+            });
         });
 
         document.querySelectorAll('.github-btn').forEach(btn => {
-            btn.addEventListener('click', () => this.handleSocialAuth('github'));
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.handleSocialAuth('github');
+            });
         });
 
         document.querySelectorAll('.facebook-btn').forEach(btn => {
-            btn.addEventListener('click', () => this.handleSocialAuth('facebook'));
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.handleSocialAuth('facebook');
+            });
+        });
+
+        // Password toggle functionality
+        document.querySelectorAll('.password-toggle').forEach(toggle => {
+            toggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.togglePassword(e.currentTarget);
+            });
         });
 
         // Password strength checking
@@ -67,6 +86,63 @@ class AuthManager {
         document.querySelectorAll('input[type="email"]').forEach(input => {
             input.addEventListener('blur', (e) => this.validateEmail(e.target));
         });
+
+        // Input focus animations
+        document.querySelectorAll('.input-box input').forEach(input => {
+            input.addEventListener('focus', function() {
+                gsap.to(this.parentElement, {
+                    scale: 1.02,
+                    duration: 0.2,
+                    ease: "power2.out"
+                });
+            });
+            
+            input.addEventListener('blur', function() {
+                gsap.to(this.parentElement, {
+                    scale: 1,
+                    duration: 0.2,
+                    ease: "power2.out"
+                });
+            });
+        });
+    }
+
+    animateFormSwitch(toForm) {
+        // Add subtle animation when switching forms
+        const forms = document.querySelectorAll('.form-box');
+        
+        forms.forEach(form => {
+            gsap.from(form, {
+                opacity: 0,
+                x: toForm === 'register' ? 20 : -20,
+                duration: 0.5,
+                delay: 0.3,
+                ease: "power2.out"
+            });
+        });
+    }
+
+    togglePassword(toggleBtn) {
+        const targetId = toggleBtn.getAttribute('data-target');
+        const input = document.getElementById(targetId);
+        const icon = toggleBtn.querySelector('i');
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+        
+        // Animate the toggle button
+        gsap.to(toggleBtn, {
+            scale: 0.9,
+            duration: 0.1,
+            yoyo: true,
+            repeat: 1,
+            ease: "power2.inOut"
+        });
     }
 
     async handleLogin(e) {
@@ -87,7 +163,6 @@ class AuthManager {
             this.showSuccessModal('Welcome back to AlgoRhythm!', 'login');
             
             setTimeout(() => {
-                // Redirect to main app
                 this.redirectToApp();
             }, 2000);
             
@@ -108,13 +183,21 @@ class AuthManager {
         const submitBtn = e.target.querySelector('.btn');
 
         // Validation
+        if (!name.trim()) {
+            this.showNotification('Please enter your full name', 'error');
+            this.animateInputError(document.getElementById('registerName'));
+            return;
+        }
+
         if (!this.validateEmail(document.getElementById('registerEmail'))) return;
         if (!this.validatePassword(password)) return;
+        
         if (password !== confirmPassword) {
             this.showNotification('Passwords do not match', 'error');
             this.animateInputError(document.getElementById('confirmPassword'));
             return;
         }
+        
         if (!acceptTerms) {
             this.showNotification('Please accept the terms and privacy policy', 'error');
             return;
@@ -211,8 +294,10 @@ class AuthManager {
         
         if (confirmPassword && password !== confirmPassword) {
             this.animateInputError(confirmInput);
+            confirmInput.style.borderColor = '#ef4444';
         } else if (confirmPassword) {
             this.animateInputSuccess(confirmInput);
+            confirmInput.style.borderColor = '#10b981';
         }
     }
 
