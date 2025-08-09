@@ -1,4 +1,4 @@
-// Enhanced Authentication JavaScript with GSAP and 3D effects
+// Enhanced Authentication JavaScript with smooth transitions
 class AuthManager {
     constructor() {
         this.init();
@@ -19,17 +19,19 @@ class AuthManager {
     }
 
     setupEventListeners() {
-        // Toggle between login and register with smooth animation
+        // Toggle between login and register with smooth animation - MAIN FUNCTIONALITY
         this.registerBtn?.addEventListener('click', () => {
             this.container.classList.add('active');
             this.currentForm = 'register';
             this.animateFormSwitch('register');
+            console.log('Switched to Register');
         });
 
         this.loginBtn?.addEventListener('click', () => {
             this.container.classList.remove('active');
             this.currentForm = 'login';
             this.animateFormSwitch('login');
+            console.log('Switched to Login');
         });
 
         // Form submissions
@@ -58,14 +60,6 @@ class AuthManager {
             });
         });
 
-        // Password toggle functionality
-        document.querySelectorAll('.password-toggle').forEach(toggle => {
-            toggle.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.togglePassword(e.currentTarget);
-            });
-        });
-
         // Password strength checking
         document.getElementById('registerPassword')?.addEventListener('input', (e) => {
             this.updatePasswordStrength(e.target.value);
@@ -90,19 +84,23 @@ class AuthManager {
         // Input focus animations
         document.querySelectorAll('.input-box input').forEach(input => {
             input.addEventListener('focus', function() {
-                gsap.to(this.parentElement, {
-                    scale: 1.02,
-                    duration: 0.2,
-                    ease: "power2.out"
-                });
+                if (typeof gsap !== 'undefined') {
+                    gsap.to(this.parentElement, {
+                        scale: 1.02,
+                        duration: 0.2,
+                        ease: "power2.out"
+                    });
+                }
             });
             
             input.addEventListener('blur', function() {
-                gsap.to(this.parentElement, {
-                    scale: 1,
-                    duration: 0.2,
-                    ease: "power2.out"
-                });
+                if (typeof gsap !== 'undefined') {
+                    gsap.to(this.parentElement, {
+                        scale: 1,
+                        duration: 0.2,
+                        ease: "power2.out"
+                    });
+                }
             });
         });
     }
@@ -111,38 +109,17 @@ class AuthManager {
         // Add subtle animation when switching forms
         const forms = document.querySelectorAll('.form-box');
         
-        forms.forEach(form => {
-            gsap.from(form, {
-                opacity: 0,
-                x: toForm === 'register' ? 20 : -20,
-                duration: 0.5,
-                delay: 0.3,
-                ease: "power2.out"
+        if (typeof gsap !== 'undefined') {
+            forms.forEach(form => {
+                gsap.from(form, {
+                    opacity: 0,
+                    x: toForm === 'register' ? 20 : -20,
+                    duration: 0.5,
+                    delay: 0.3,
+                    ease: "power2.out"
+                });
             });
-        });
-    }
-
-    togglePassword(toggleBtn) {
-        const targetId = toggleBtn.getAttribute('data-target');
-        const input = document.getElementById(targetId);
-        const icon = toggleBtn.querySelector('i');
-        
-        if (input.type === 'password') {
-            input.type = 'text';
-            icon.classList.replace('fa-eye', 'fa-eye-slash');
-        } else {
-            input.type = 'password';
-            icon.classList.replace('fa-eye-slash', 'fa-eye');
         }
-        
-        // Animate the toggle button
-        gsap.to(toggleBtn, {
-            scale: 0.9,
-            duration: 0.1,
-            yoyo: true,
-            repeat: 1,
-            ease: "power2.inOut"
-        });
     }
 
     async handleLogin(e) {
@@ -253,13 +230,15 @@ class AuthManager {
         if (!this.validateEmail(document.getElementById('loginEmail'))) return;
 
         // Animate forgot password link
-        gsap.to('#forgotPassword', {
-            scale: 0.95,
-            duration: 0.1,
-            yoyo: true,
-            repeat: 1,
-            ease: "power2.inOut"
-        });
+        if (typeof gsap !== 'undefined') {
+            gsap.to('#forgotPassword', {
+                scale: 0.95,
+                duration: 0.1,
+                yoyo: true,
+                repeat: 1,
+                ease: "power2.inOut"
+            });
+        }
 
         this.showNotification('Password reset link sent to your email!', 'success');
     }
@@ -319,40 +298,48 @@ class AuthManager {
         
         strengthBars.forEach((bar, index) => {
             if (index < strength) {
-                gsap.to(bar, {
-                    backgroundColor: colors[Math.min(strength - 1, 4)],
-                    scale: 1,
-                    duration: 0.3,
-                    ease: "power2.out"
-                });
+                if (typeof gsap !== 'undefined') {
+                    gsap.to(bar, {
+                        backgroundColor: colors[Math.min(strength - 1, 4)],
+                        scale: 1,
+                        duration: 0.3,
+                        ease: "power2.out"
+                    });
+                }
                 bar.classList.add(strength <= 2 ? 'weak' : strength <= 3 ? 'medium' : 'strong');
             } else {
-                gsap.to(bar, {
-                    backgroundColor: 'rgba(255,255,255,0.2)',
-                    scale: 0.8,
-                    duration: 0.3,
-                    ease: "power2.out"
-                });
+                if (typeof gsap !== 'undefined') {
+                    gsap.to(bar, {
+                        backgroundColor: 'rgba(255,255,255,0.2)',
+                        scale: 0.8,
+                        duration: 0.3,
+                        ease: "power2.out"
+                    });
+                }
                 bar.classList.remove('weak', 'medium', 'strong');
             }
         });
         
         if (strengthText && password.length > 0) {
             strengthText.textContent = levels[Math.min(strength, 4)] || 'Very Weak';
-            gsap.fromTo(strengthText, 
-                { opacity: 0, y: 5 },
-                { opacity: 1, y: 0, duration: 0.3 }
-            );
+            if (typeof gsap !== 'undefined') {
+                gsap.fromTo(strengthText, 
+                    { opacity: 0, y: 5 },
+                    { opacity: 1, y: 0, duration: 0.3 }
+                );
+            }
         }
     }
 
     // UI Animation methods
     animateInputError(input) {
-        gsap.to(input, {
-            x: [-5, 5, -5, 5, 0],
-            duration: 0.5,
-            ease: "power2.out"
-        });
+        if (typeof gsap !== 'undefined') {
+            gsap.to(input, {
+                x: [-5, 5, -5, 5, 0],
+                duration: 0.5,
+                ease: "power2.out"
+            });
+        }
         
         input.style.borderColor = '#ef4444';
     }
@@ -360,13 +347,15 @@ class AuthManager {
     animateInputSuccess(input) {
         input.style.borderColor = '#10b981';
         
-        gsap.to(input, {
-            scale: 1.02,
-            duration: 0.2,
-            yoyo: true,
-            repeat: 1,
-            ease: "power2.inOut"
-        });
+        if (typeof gsap !== 'undefined') {
+            gsap.to(input, {
+                scale: 1.02,
+                duration: 0.2,
+                yoyo: true,
+                repeat: 1,
+                ease: "power2.inOut"
+            });
+        }
     }
 
     setButtonLoading(button, loading) {
@@ -383,13 +372,15 @@ class AuthManager {
         button.classList.remove('loading');
         button.style.background = 'linear-gradient(135deg, #10b981, #059669)';
         
-        gsap.to(button, {
-            scale: 1.05,
-            duration: 0.2,
-            yoyo: true,
-            repeat: 1,
-            ease: "power2.inOut"
-        });
+        if (typeof gsap !== 'undefined') {
+            gsap.to(button, {
+                scale: 1.05,
+                duration: 0.2,
+                yoyo: true,
+                repeat: 1,
+                ease: "power2.inOut"
+            });
+        }
     }
 
     showSuccessModal(message, type) {
@@ -399,10 +390,12 @@ class AuthManager {
         messageEl.textContent = message;
         modal.classList.add('show');
         
-        gsap.fromTo(modal.querySelector('.modal-content'),
-            { scale: 0.8, opacity: 0 },
-            { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" }
-        );
+        if (typeof gsap !== 'undefined') {
+            gsap.fromTo(modal.querySelector('.modal-content'),
+                { scale: 0.8, opacity: 0 },
+                { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" }
+            );
+        }
     }
 
     showNotification(message, type = 'info') {
@@ -419,28 +412,36 @@ class AuthManager {
         document.body.appendChild(notification);
         
         // Animate in
-        gsap.to(notification, {
-            className: `notification ${type} show`,
-            duration: 0.3,
-            ease: "power2.out"
-        });
+        if (typeof gsap !== 'undefined') {
+            gsap.to(notification, {
+                className: `notification ${type} show`,
+                duration: 0.3,
+                ease: "power2.out"
+            });
+        } else {
+            notification.classList.add('show');
+        }
         
         // Auto remove
         setTimeout(() => {
-            gsap.to(notification, {
-                opacity: 0,
-                y: -50,
-                duration: 0.3,
-                ease: "power2.in",
-                onComplete: () => notification.remove()
-            });
+            if (typeof gsap !== 'undefined') {
+                gsap.to(notification, {
+                    opacity: 0,
+                    y: -50,
+                    duration: 0.3,
+                    ease: "power2.in",
+                    onComplete: () => notification.remove()
+                });
+            } else {
+                notification.remove();
+            }
         }, 4000);
     }
 
     // 3D Background setup
     setup3DBackground() {
         const canvas = document.getElementById('auth-3d-canvas');
-        if (!canvas) return;
+        if (!canvas || typeof THREE === 'undefined') return;
 
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -632,33 +633,39 @@ class AuthManager {
         // Add interaction effects
         document.querySelectorAll('button, a, input').forEach(el => {
             el.addEventListener('mouseenter', () => {
-                gsap.to(follower, {
-                    scale: 1.5,
-                    opacity: 0.8,
-                    duration: 0.3
-                });
+                if (typeof gsap !== 'undefined') {
+                    gsap.to(follower, {
+                        scale: 1.5,
+                        opacity: 0.8,
+                        duration: 0.3
+                    });
+                }
             });
             
             el.addEventListener('mouseleave', () => {
-                gsap.to(follower, {
-                    scale: 1,
-                    opacity: 0.6,
-                    duration: 0.3
-                });
+                if (typeof gsap !== 'undefined') {
+                    gsap.to(follower, {
+                        scale: 1,
+                        opacity: 0.6,
+                        duration: 0.3
+                    });
+                }
             });
         });
     }
 
     setupFloatingCodeAnimation() {
         // Additional floating animations for code snippets
-        gsap.to('.code-snippet', {
-            y: -10,
-            duration: 2,
-            ease: "sine.inOut",
-            yoyo: true,
-            repeat: -1,
-            stagger: 0.5
-        });
+        if (typeof gsap !== 'undefined') {
+            gsap.to('.code-snippet', {
+                y: -10,
+                duration: 2,
+                ease: "sine.inOut",
+                yoyo: true,
+                repeat: -1,
+                stagger: 0.5
+            });
+        }
     }
 
     // Helper methods
@@ -704,28 +711,30 @@ document.addEventListener('DOMContentLoaded', () => {
     new AuthManager();
     
     // Add some entrance animations
-    gsap.from('.container', {
-        scale: 0.8,
-        opacity: 0,
-        duration: 1,
-        ease: "back.out(1.7)",
-        delay: 0.3
-    });
-    
-    gsap.from('.auth-header', {
-        y: -100,
-        opacity: 0,
-        duration: 0.8,
-        ease: "power2.out"
-    });
-    
-    gsap.from('.music-visualizer', {
-        x: 100,
-        opacity: 0,
-        duration: 0.8,
-        ease: "power2.out",
-        delay: 0.5
-    });
+    if (typeof gsap !== 'undefined') {
+        gsap.from('.container', {
+            scale: 0.8,
+            opacity: 0,
+            duration: 1,
+            ease: "back.out(1.7)",
+            delay: 0.3
+        });
+        
+        gsap.from('.auth-header', {
+            y: -100,
+            opacity: 0,
+            duration: 0.8,
+            ease: "power2.out"
+        });
+        
+        gsap.from('.music-visualizer', {
+            x: 100,
+            opacity: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            delay: 0.5
+        });
+    }
 });
 
 // Handle page visibility for performance
@@ -735,10 +744,10 @@ document.addEventListener('visibilitychange', () => {
     
     if (document.hidden) {
         // Pause animations when tab is not visible
-        canvas3d.style.display = 'none';
-        matrixCanvas.style.display = 'none';
+        if (canvas3d) canvas3d.style.display = 'none';
+        if (matrixCanvas) matrixCanvas.style.display = 'none';
     } else {
-        canvas3d.style.display = 'block';
-        matrixCanvas.style.display = 'block';
+        if (canvas3d) canvas3d.style.display = 'block';
+        if (matrixCanvas) matrixCanvas.style.display = 'block';
     }
 });
