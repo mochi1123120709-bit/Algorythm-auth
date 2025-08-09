@@ -43,6 +43,10 @@ class AuthManager {
             btn.addEventListener('click', () => this.handleSocialAuth('github'));
         });
 
+        document.querySelectorAll('.facebook-btn').forEach(btn => {
+            btn.addEventListener('click', () => this.handleSocialAuth('facebook'));
+        });
+
         // Password strength checking
         document.getElementById('registerPassword')?.addEventListener('input', (e) => {
             this.updatePasswordStrength(e.target.value);
