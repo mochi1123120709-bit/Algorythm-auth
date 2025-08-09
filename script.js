@@ -1,12 +1,14 @@
 // Core Authentication Manager
 class AuthManager {
     constructor() {
+        this.showLoadingScreen();
         this.init();
         this.setupEventListeners();
         this.setup3DBackground();
         this.setupMatrixEffect();
         this.setupCursorFollower();
         this.setupFloatingCodeAnimation();
+        this.hideLoadingScreen();
     }
 
     init() {
@@ -17,13 +19,26 @@ class AuthManager {
         this.registerForm = document.getElementById('registerForm');
         
         console.log('AuthManager initialized');
-        console.log('Register button:', this.registerBtn);
-        console.log('Login button:', this.loginBtn);
-        console.log('Container:', this.container);
+    }
+
+    showLoadingScreen() {
+        const overlay = document.getElementById('loadingOverlay');
+        if (overlay) {
+            overlay.classList.remove('hidden');
+        }
+    }
+
+    hideLoadingScreen() {
+        setTimeout(() => {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.classList.add('hidden');
+            }
+        }, 1500);
     }
 
     setupEventListeners() {
-        // CRITICAL: Register button click event
+        // Register button click event - switches to register form
         if (this.registerBtn) {
             this.registerBtn.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -35,7 +50,7 @@ class AuthManager {
             console.error('Register button not found!');
         }
 
-        // CRITICAL: Login button click event
+        // Login button click event - switches to login form
         if (this.loginBtn) {
             this.loginBtn.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -78,6 +93,13 @@ class AuthManager {
             });
         });
 
+        document.querySelectorAll('.linkedin-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.handleSocialAuth('linkedin');
+            });
+        });
+
         // Forgot password
         const forgotPasswordLink = document.getElementById('forgotPassword');
         if (forgotPasswordLink) {
@@ -90,12 +112,23 @@ class AuthManager {
         // Input focus animations
         document.querySelectorAll('.input-box input').forEach(input => {
             input.addEventListener('focus', function() {
-                this.parentElement.style.transform = 'scale(1.02)';
-                this.parentElement.style.transition = 'transform 0.2s ease';
+                this.parentElement.style.transform = 'scale(1.02) translateY(-2px)';
+                this.parentElement.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
             });
             
             input.addEventListener('blur', function() {
                 this.parentElement.style.transform = 'scale(1)';
+            });
+
+            // Real-time validation feedback
+            input.addEventListener('input', function() {
+                this.classList.remove('error');
+                if (this.type === 'email' && this.value) {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(this.value)) {
+                        this.classList.add('error');
+                    }
+                }
             });
         });
     }
@@ -109,11 +142,22 @@ class AuthManager {
             forms.forEach(form => {
                 gsap.from(form, {
                     opacity: 0,
-                    x: toForm === 'register' ? 20 : -20,
-                    duration: 0.5,
-                    delay: 0.3,
-                    ease: "power2.out"
+                    x: toForm === 'register' ? 30 : -30,
+                    duration: 0.6,
+                    delay: 0.4,
+                    ease: "power3.out"
                 });
+            });
+
+            // Animate form elements
+            const activeForm = toForm === 'register' ? '.form-box.register' : '.form-box.login';
+            gsap.from(`${activeForm} .input-box`, {
+                y: 20,
+                opacity: 0,
+                duration: 0.4,
+                delay: 0.6,
+                stagger: 0.1,
+                ease: "power2.out"
             });
         }
     }
@@ -126,6 +170,11 @@ class AuthManager {
 
         if (!email || !password) {
             this.showNotification('Please fill in all fields', 'error');
+            return;
+        }
+
+        if (!this.validateEmail(email)) {
+            this.showNotification('Please enter a valid email address', 'error');
             return;
         }
 
@@ -162,13 +211,23 @@ class AuthManager {
             return;
         }
 
+        if (!this.validateEmail(email)) {
+            this.showNotification('Please enter a valid email address', 'error');
+            return;
+        }
+
         if (password !== confirmPassword) {
             this.showNotification('Passwords do not match', 'error');
             return;
         }
 
-        if (password.length < 6) {
-            this.showNotification('Password must be at least 6 characters', 'error');
+        if (password.length < 8) {
+            this.showNotification('Password must be at least 8 characters', 'error');
+            return;
+        }
+
+        if (!this.validatePassword(password)) {
+            this.showNotification('Password must contain at least one uppercase letter, one lowercase letter, and one number', 'error');
             return;
         }
 
@@ -189,6 +248,16 @@ class AuthManager {
             this.setButtonLoading(submitBtn, false);
             this.showNotification(error.message, 'error');
         }
+    }
+
+    validateEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    validatePassword(password) {
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$/;
+        return passwordRegex.test(password);
     }
 
     async handleSocialAuth(provider) {
@@ -218,6 +287,11 @@ class AuthManager {
             return;
         }
 
+        if (!this.validateEmail(email)) {
+            this.showNotification('Please enter a valid email address', 'error');
+            return;
+        }
+
         this.showNotification('Password reset link sent to your email!', 'success');
     }
 
@@ -234,6 +308,17 @@ class AuthManager {
     setButtonSuccess(button) {
         button.classList.remove('loading');
         button.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+        
+        // Add success animation
+        if (typeof gsap !== 'undefined') {
+            gsap.to(button, {
+                scale: 1.05,
+                duration: 0.2,
+                yoyo: true,
+                repeat: 1,
+                ease: "power2.inOut"
+            });
+        }
     }
 
     showSuccessModal(message) {
@@ -242,6 +327,16 @@ class AuthManager {
         
         if (messageEl) messageEl.textContent = message;
         if (modal) modal.classList.add('show');
+
+        // Add entrance animation
+        if (typeof gsap !== 'undefined') {
+            gsap.from('.modal-content', {
+                scale: 0.8,
+                opacity: 0,
+                duration: 0.4,
+                ease: "back.out(1.7)"
+            });
+        }
     }
 
     showNotification(message, type = 'info') {
@@ -264,7 +359,7 @@ class AuthManager {
         setTimeout(() => {
             notification.classList.remove('show');
             setTimeout(() => notification.remove(), 300);
-        }, 4000);
+        }, 5000);
     }
 
     // 3D Background setup
@@ -282,13 +377,13 @@ class AuthManager {
         // Create floating shapes
         const shapes = [];
         
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < 40; i++) {
             const geometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
             const material = new THREE.MeshBasicMaterial({ 
-                color: 0xF59E0B, 
+                color: Math.random() > 0.5 ? 0x6366F1 : 0x8B5CF6, 
                 wireframe: true,
                 transparent: true,
-                opacity: 0.4
+                opacity: 0.3
             });
             
             const cube = new THREE.Mesh(geometry, material);
@@ -310,7 +405,7 @@ class AuthManager {
         // Central music cube
         const musicGeometry = new THREE.BoxGeometry(1.5, 1.5, 1.5);
         const musicMaterial = new THREE.MeshBasicMaterial({
-            color: 0xF59E0B,
+            color: 0x6366F1,
             wireframe: true,
             transparent: true,
             opacity: 0.7
@@ -334,13 +429,13 @@ class AuthManager {
             requestAnimationFrame(animate);
 
             shapes.forEach((shape, index) => {
-                shape.rotation.x += 0.005;
-                shape.rotation.y += 0.005;
+                shape.rotation.x += 0.003;
+                shape.rotation.y += 0.003;
                 shape.position.y += Math.sin(Date.now() * 0.001 + index) * 0.003;
             });
 
-            musicCube.rotation.x += 0.008;
-            musicCube.rotation.y += 0.012;
+            musicCube.rotation.x += 0.006;
+            musicCube.rotation.y += 0.010;
             musicCube.scale.setScalar(1 + Math.sin(Date.now() * 0.004) * 0.1);
 
             camera.position.x += (mouseX * 3 - camera.position.x) * 0.05;
@@ -368,7 +463,7 @@ class AuthManager {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()+-=[]{}|;:,.<>?".split("");
+        const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()+-=[]{}|;:,.<>?アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン".split("");
         const font_size = 12;
         const columns = canvas.width / font_size;
         const drops = [];
@@ -378,10 +473,10 @@ class AuthManager {
         }
 
         const draw = () => {
-            ctx.fillStyle = 'rgba(5, 5, 8, 0.05)';
+            ctx.fillStyle = 'rgba(10, 10, 15, 0.05)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.fillStyle = '#F59E0B';
+            ctx.fillStyle = '#6366F1';
             ctx.font = font_size + 'px monospace';
 
             for (let i = 0; i < drops.length; i++) {
@@ -395,7 +490,13 @@ class AuthManager {
             }
         };
 
-        setInterval(draw, 50);
+        setInterval(draw, 60);
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
     }
 
     setupCursorFollower() {
@@ -413,8 +514,8 @@ class AuthManager {
         });
 
         const animateFollower = () => {
-            followerX += (mouseX - followerX) * 0.1;
-            followerY += (mouseY - followerY) * 0.1;
+            followerX += (mouseX - followerX) * 0.08;
+            followerY += (mouseY - followerY) * 0.08;
             
             follower.style.left = followerX + 'px';
             follower.style.top = followerY + 'px';
@@ -428,18 +529,22 @@ class AuthManager {
     setupFloatingCodeAnimation() {
         if (typeof gsap !== 'undefined') {
             gsap.to('.code-snippet', {
-                y: -10,
-                duration: 2,
+                y: -15,
+                duration: 3,
                 ease: "sine.inOut",
                 yoyo: true,
                 repeat: -1,
-                stagger: 0.5
+                stagger: 0.3
             });
         }
     }
 
     redirectToApp() {
-        window.location.href = '/dashboard';
+        // Show loading before redirect
+        this.showLoadingScreen();
+        setTimeout(() => {
+            window.location.href = '/dashboard';
+        }, 1000);
     }
 
     async simulateAuth(data) {
@@ -450,7 +555,7 @@ class AuthManager {
                 } else {
                     resolve({ success: true, data });
                 }
-            }, 1500);
+            }, 2000);
         });
     }
 
@@ -462,7 +567,7 @@ class AuthManager {
                 } else {
                     reject(new Error(`Failed to authenticate with ${provider}`));
                 }
-            }, 1000);
+            }, 1500);
         });
     }
 }
@@ -480,27 +585,51 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Entrance animations
     if (typeof gsap !== 'undefined') {
+        // Initial page load animations
+        gsap.set('.container', { scale: 0.9, opacity: 0 });
+        gsap.set('.auth-header', { y: -100, opacity: 0 });
+        gsap.set('.music-visualizer', { x: 100, opacity: 0 });
+        
         gsap.from('.container', {
-            scale: 0.8,
+            scale: 0.9,
             opacity: 0,
-            duration: 1,
+            duration: 1.2,
             ease: "back.out(1.7)",
-            delay: 0.3
+            delay: 1.8
         });
         
         gsap.from('.auth-header', {
             y: -100,
             opacity: 0,
-            duration: 0.8,
-            ease: "power2.out"
+            duration: 1,
+            ease: "power3.out",
+            delay: 1.6
         });
         
         gsap.from('.music-visualizer', {
             x: 100,
             opacity: 0,
-            duration: 0.8,
-            ease: "power2.out",
-            delay: 0.5
+            duration: 1,
+            ease: "power3.out",
+            delay: 2
+        });
+
+        // Animate form elements on initial load
+        gsap.from('.form-box.login .input-box', {
+            y: 30,
+            opacity: 0,
+            duration: 0.6,
+            delay: 2.2,
+            stagger: 0.1,
+            ease: "power2.out"
+        });
+
+        gsap.from('.form-box.login .btn', {
+            y: 20,
+            opacity: 0,
+            duration: 0.6,
+            delay: 2.8,
+            ease: "power2.out"
         });
     }
 });
